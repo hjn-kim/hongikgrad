@@ -19,17 +19,15 @@ export function filterCourses(rawCourses) {
 }
 
 /**
- * 총학점 + 전공학점 합산
+ * 전공학점 합산
  * @param {Set<string>} takenSet - 이수 완료 학수번호 Set
  * @param {Set<string>} majorIds - 해당 전공의 전공 과목 학수번호 Set
- * @returns {{ totalCredits: number, majorCredits: number }}
+ * @returns {{ majorCredits: number }}
  */
 export function calcCredits(takenSet, majorIds) {
-  let totalCredits = 0
-  for (const id of takenSet) totalCredits += getCredits(id)
   let majorCredits = 0
   for (const id of majorIds) {
     if (takenSet.has(id)) majorCredits += getCredits(id)
   }
-  return { totalCredits, majorCredits }
+  return { majorCredits }
 }

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { parseCourses } from "./parser"
+import { parseCourses, parseTotalCredits } from "./parser"
 import { filterCourses, calcCredits } from "./creditSum"
 import { REQ_GYOYANG_PIL, REQ_DRAGONBALL, checkRequirements } from "./requirements"
 import { REQ_CS, CS_MAJOR_IDS } from "./majors/computerScience"
@@ -40,7 +40,8 @@ function InputPage({ onSubmit }) {
     setError("")
     const takenSet = new Set(ids)
     const { req: majorReq, majorIds } = MAJOR_CONFIG[major]
-    const { totalCredits, majorCredits } = calcCredits(takenSet, majorIds)
+    const totalCredits = parseTotalCredits(text)
+    const { majorCredits } = calcCredits(takenSet, majorIds)
     const results = checkRequirements(takenSet, [REQ_GYOYANG_PIL, majorReq, REQ_DRAGONBALL])
     onSubmit({ results, totalCredits, majorCredits })
   }

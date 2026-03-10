@@ -4,6 +4,16 @@
  * @param {string} text
  * @returns {{ id: string, grade: string }[]}
  */
+/**
+ * '총 취득학점\t106 학점' 형태에서 숫자 파싱
+ * @param {string} text
+ * @returns {number}
+ */
+export function parseTotalCredits(text) {
+  const match = text.match(/총\s*취득학점\s*\t(\d+)\s*학점/)
+  return match ? parseInt(match[1], 10) : 0
+}
+
 export function parseCourses(text) {
   const courses = []
   for (const line of text.split("\n")) {
