@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { parseCourses, parseTotalCredits } from "./parser"
 import { filterCourses, calcCredits } from "./creditSum"
 import { REQ_GYOYANG_PIL, REQ_DRAGONBALL, checkRequirements } from "./requirements"
@@ -42,7 +42,8 @@ function InputPage({ onSubmit }) {
     const { REQ: majorReq, MAJOR_IDS: majorIds, CREDITS: creditMap, MSC: mscTrack } = MAJORS[major]
     const totalCredits = parseTotalCredits(text)
     const { majorCredits } = calcCredits(takenSet, majorIds, creditMap)
-    const reqList = [REQ_GYOYANG_PIL, REQ_DRAGONBALL, majorReq]
+    const reqList = [REQ_GYOYANG_PIL, REQ_DRAGONBALL]
+    Array.isArray(majorReq) ? reqList.push(...majorReq) : reqList.push(majorReq)
     const mscReq = mscTrack ? MSC_REQS[mscTrack] : null
     if (mscReq) Array.isArray(mscReq) ? reqList.push(...mscReq) : reqList.push(mscReq)
     const results = checkRequirements(takenSet, reqList)
@@ -290,11 +291,22 @@ function NOfCard({ result }) {
 export default function App() {
   const [data, setData] = useState(null)
 
+  useEffect(() => {
+    const handlePopState = () => setData(null)
+    window.addEventListener("popstate", handlePopState)
+    return () => window.removeEventListener("popstate", handlePopState)
+  }, [])
+
+  function handleSubmit(result) {
+    window.history.pushState({ result: true }, "")
+    setData(result)
+  }
+
   return (
     <>
       {data
         ? <ResultPage results={data.results} totalCredits={data.totalCredits} majorCredits={data.majorCredits} onBack={() => setData(null)} />
-        : <InputPage onSubmit={setData} />
+        : <InputPage onSubmit={handleSubmit} />
       }
       <footer style={{ textAlign: 'center', padding: '16px', fontSize: '13px', color: '#888', marginTop: '32px' }}>
         Copyright 2026. 김형준 &amp; 김범수 All rights reserved.
